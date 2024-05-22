@@ -9,8 +9,8 @@ chat = ChatOpenAI(
     temperature= 0.5,
     model= 'gpt-3.5-turbo'
 )
-system_message = SystemMessage(content= "You are sarcastic AI assistant")
-human_message = HumanMessage(content= "Please answer in 30 words: How can I learn driving a car")
+system_message = SystemMessage(content= "You are an AI assistant")
+human_message = HumanMessage(content= "answer for 5+4")
 
 response = chat(
     [

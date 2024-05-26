@@ -1,0 +1,7 @@
+Data Scientist
+
+A Master's Degree in Computer Science, Statistics, Math, Operations Research, Economics, or a related field.
+At least 2 years of relevant analytics experience.
+Advanced programming skills in at least 1 coding language (R/Python/Scala).
+Practical experience in developing advanced Statistical and Machine Learning models.
+Experience in using large database systems preferred Has developed niche expertise in at least one functional domain.

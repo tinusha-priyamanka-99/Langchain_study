@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain_openai import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.prompts import PromptTemplate
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from langchain_community.document_loaders import DirectoryLoader, PyMuPDFLoader
 from langchain_community.embeddings import HuggingFaceInstructEmbeddings
 from langchain_community.vectorstores import FAISS
 
@@ -12,7 +12,7 @@ load_dotenv()
 llm = OpenAI(temperature=0, max_tokens=500)
 
 folder_path = 'D:\\Data Science\\Generative_AI\\Resume reader'
-loader = DirectoryLoader(folder_path, glob='*.txt', loader_cls=TextLoader)
+loader = DirectoryLoader(folder_path, glob='*.pdf', loader_cls=PyMuPDFLoader)
 documents = loader.load()
 
 embeddings = HuggingFaceInstructEmbeddings()
@@ -85,7 +85,7 @@ data = {
 }
 
 for i, result in enumerate(all_results):
-    data["File"].append(f'JD_{i+1}.txt')
+    data["File"].append(f'JD_{i+1}.pdf')
     data["Job title"].append(result["Job title"])
     data["Experienced years"].append(result["Experienced years"])
     data["Academic Qualification"].append(result["Academic Qualification"])

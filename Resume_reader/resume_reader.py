@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from dotenv import load_dotenv
 from langchain_openai import OpenAI
@@ -11,16 +12,22 @@ load_dotenv()
 
 llm = OpenAI(temperature=0, max_tokens=500)
 
-folder_path = 'D:\\Data Science\\Generative_AI\\Resume reader'
+folder_path = 'D:\\Data Science\\Generative_AI\\Resume_reader'
 loader = DirectoryLoader(folder_path, glob='*.pdf', loader_cls=PyMuPDFLoader)
 documents = loader.load()
+
+# Print the loaded documents for debugging
+print(f"Number of documents loaded: {len(documents)}")
+for doc in documents:
+    print(f"Document metadata: {doc.metadata}")
 
 embeddings = HuggingFaceInstructEmbeddings()
 
 prompt_template = """
-Given the following context and a question, generate an answer using minimum number of words based on this context only.
-In the answer try to provide as much text as possible from "response" section in the source document context without making much changes.
-If the answer is not found in the context, kindly state "I don't know." Don't try to make up an answer.
+You are an resume information extractor.Given the following context and a question, 
+generate an answer using minimum number of words based on this context only.
+If there are more answers for a question, provide a list of those answers.
+If the answer is not found in the context, state "I don't know." Don't try to make up an answer.
 
 CONTEXT: {context}
 
@@ -32,14 +39,23 @@ PROMPT = PromptTemplate(
 )
 
 questions = [
-    "Mention the job title using less than four words.",
-    "Mention the number of experience years needed for positions using less than six words.",
-    "Mention the academic qualification using less than ten words."
+    "Mention the job field.",
+    "Mention the number of experienced years of each positions as a list.",
+    "Mention the academic qualifications as a list."
 ]
 
 all_results = []
 
+# Use a set to keep track of processed file names
+processed_files = set()
+
 for doc in documents:
+    file_name_with_path = doc.metadata["source"]
+    file_name = os.path.basename(file_name_with_path)
+    if file_name in processed_files:
+        continue  # Skip if already processed
+    processed_files.add(file_name)
+    
     vectordb = FAISS.from_documents(
         documents=[doc],
         embedding=embeddings
@@ -74,6 +90,7 @@ for doc in documents:
             results["Academic Qualification"].append(result['result'])
 
     # Add the results for this document to the list of all results
+    results["File"] = file_name  # Store the file name without the path
     all_results.append(results)
 
 # Convert all results to a DataFrame
@@ -84,8 +101,8 @@ data = {
     "Academic Qualification": []
 }
 
-for i, result in enumerate(all_results):
-    data["File"].append(f'JD_{i+1}.pdf')
+for result in all_results:
+    data["File"].append(result["File"])
     data["Job title"].append(result["Job title"])
     data["Experienced years"].append(result["Experienced years"])
     data["Academic Qualification"].append(result["Academic Qualification"])
@@ -94,6 +111,9 @@ df = pd.DataFrame(data)
 
 print(df)
 
-print("\nAcademic Qualification:")
-for qualification in df["Academic Qualification"]:
-    print(qualification)
+excel_file_path = "output_pdf2.xlsx"
+df.to_excel(excel_file_path, index=False)
+
+#print("\nAcademic Qualification:")
+#for qualification in df["Academic Qualification"]:
+#    print(qualification)

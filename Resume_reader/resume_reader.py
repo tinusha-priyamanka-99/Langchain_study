@@ -39,7 +39,6 @@ PROMPT = PromptTemplate(
 )
 
 questions = [
-    "Mention the job field.",
     "Mention the number of experienced years of each positions as a list.",
     "Mention the academic qualifications as a list."
 ]
@@ -74,7 +73,6 @@ for doc in documents:
 
     # Dictionary to store the results for this document
     results = {
-        "Job title": [],
         "Experienced years": [],
         "Academic Qualification": []
     }
@@ -82,9 +80,7 @@ for doc in documents:
     # Query each question and store the results
     for question in questions:
         result = chain({"query": question})
-        if question.startswith("Mention the job title"):
-            results["Job title"].append(result['result'])
-        elif question.startswith("Mention the number of experience years"):
+        if question.startswith("Mention the number of experience years"):
             results["Experienced years"].append(result['result'])
         elif question.startswith("Mention the academic qualification"):
             results["Academic Qualification"].append(result['result'])
@@ -96,14 +92,12 @@ for doc in documents:
 # Convert all results to a DataFrame
 data = {
     "File": [],
-    "Job title": [],
     "Experienced years": [],
     "Academic Qualification": []
 }
 
 for result in all_results:
     data["File"].append(result["File"])
-    data["Job title"].append(result["Job title"])
     data["Experienced years"].append(result["Experienced years"])
     data["Academic Qualification"].append(result["Academic Qualification"])
 
@@ -111,7 +105,7 @@ df = pd.DataFrame(data)
 
 print(df)
 
-excel_file_path = "output_pdf2.xlsx"
+excel_file_path = "output_pdfnew.xlsx"
 df.to_excel(excel_file_path, index=False)
 
 #print("\nAcademic Qualification:")

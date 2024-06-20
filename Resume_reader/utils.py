@@ -1,12 +1,9 @@
-import openai
-from langchain_openai.embeddings import OpenAIEmbeddings
 from langchain_openai import OpenAI
 from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain.schema import Document
 import pinecone
 from pypdf import PdfReader
 from langchain.chains.summarize import load_summarize_chain
-from langchain_community.llms.huggingface_hub import HuggingFaceHub
 from langchain_community.vectorstores.pinecone import Pinecone
 import os
 
